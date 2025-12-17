@@ -1,6 +1,4 @@
 
-import { Blob } from '@google/genai';
-
 export function base64ToUint8Array(base64: string): Uint8Array {
   const binaryString = atob(base64);
   const len = binaryString.length;
@@ -101,7 +99,7 @@ export function downsampleBuffer(buffer: Float32Array, inputRate: number, output
   return result;
 }
 
-export function createBlobFromFloat32(data: Float32Array, sampleRate: number): Blob {
+export function createBlobFromFloat32(data: Float32Array, sampleRate: number): { data: string; mimeType: string } {
     const int16 = float32ToPCM16(data);
     const base64 = arrayBufferToBase64(int16.buffer);
     return {

@@ -3,7 +3,6 @@
 
 export const CONFIG = {
   API_BASE_URL: 'https://router.shengsuanyun.com/api',
-  CN_API_BASE_URL: 'https://router.shengsuanyun.com/api',
   
   MODELS: {
     TEXT: 'gemini-2.5-flash',

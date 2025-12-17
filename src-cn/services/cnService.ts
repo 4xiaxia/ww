@@ -17,17 +17,10 @@ export class CNService {
 
   constructor() {
     const apiKey = CONFIG.getNextApiKey();
-    const options: any = { apiKey: apiKey || '' };
-    
-    // Critical: Use the CN-specific Base URL if configured
-    // This allows routing traffic through a domestic proxy/relay in the future without affecting the Global line.
-    if (CONFIG.CN_API_BASE_URL) {
-        options.baseUrl = CONFIG.CN_API_BASE_URL;
-    } else if (CONFIG.API_BASE_URL) {
-        options.baseUrl = CONFIG.API_BASE_URL;
-    }
-    
-    this.ai = new GoogleGenAI(options);
+    this.ai = new GoogleGenAI({
+      apiKey: apiKey || '',
+      baseUrl: CONFIG.API_BASE_URL
+    });
   }
 
   /**
