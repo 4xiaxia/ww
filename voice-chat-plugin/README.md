@@ -42,7 +42,7 @@ const voiceChat = new VoiceChat({
     apiHandler: async (base64Audio) => {
         // 1. 获取本地记忆 (上下文)
         const history = await db.getHistory(10);
-        
+
         // 2. 构造 Payload
         const payload = {
             audio: base64Audio,
@@ -52,17 +52,29 @@ const voiceChat = new VoiceChat({
             ]
         };
 
-        // 3. TODO: 发送给你的后端 API
-        // const res = await fetch('/api/chat', ...);
-        
-        return "这是模拟的 AI 回复"; 
+        // 3. 发送给你的后端 API
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const data = await response.json();
+            return data.text || "后端未返回有效文本";
+        } catch (error) {
+            console.error('API Error:', error);
+            return "抱歉，我暂时无法连接到服务器。";
+        }
     },
-    
+
     // 状态回调 (用于更新 UI)
     onStateChange: (state) => { /* idle, recording, processing, playing */ },
-    
+
     // 自动朗读回复
-    autoSpeak: true, 
+    autoSpeak: true,
     lang: 'zh-CN'
 });
 ```
@@ -97,7 +109,7 @@ await db.deleteRecord(id);
 
     ```json
     {
-      "audio": "data:audio/webm;base64,GkXfo...", 
+      "audio": "data:audio/webm;base64,GkXfo...",
       "model": "gpt-4o-audio-preview",
       "messages": [...]
     }
@@ -131,10 +143,10 @@ await db.deleteRecord(id);
     ```javascript
     // ... 获取 LLM 回复 text ...
     // 调用高质量 TTS 生成音频
-    const audioBuffer = await tts.generate(text); 
-    return { 
+    const audioBuffer = await tts.generate(text);
+    return {
         "text": text,
-        "audio": "data:audio/mp3;base64," + audioBuffer.toString('base64') 
+        "audio": "data:audio/mp3;base64," + audioBuffer.toString('base64')
     };
     ```
 
@@ -147,7 +159,7 @@ await db.deleteRecord(id);
 
 ```json
 {
-  "text": "你好！我是你的 AI 助手。" 
+  "text": "你好！我是你的 AI 助手。"
 }
 ```
 
@@ -161,7 +173,7 @@ await db.deleteRecord(id);
 }
 ```
 
-## �📱 兼容性说明
+## 📱 兼容性说明
 
 | 平台 | 录音格式 | 备注 |
 | :--- | :--- | :--- |
