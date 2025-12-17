@@ -9,7 +9,8 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     // Configure base path for GitHub Pages deployment
-    // If REPO_NAME is set, use it; otherwise default to root
+    // For GitHub Pages: set REPO_NAME to your repository name (e.g., 'ww')
+    // For custom domain or root deployment: leave REPO_NAME empty
     base: env.REPO_NAME ? `/${env.REPO_NAME}/` : '/',
     build: {
       // Optimize build output

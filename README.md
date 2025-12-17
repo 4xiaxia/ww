@@ -29,10 +29,12 @@ View your app in AI Studio: https://ai.studio/apps/drive/1EYrWfgpGnG1nJJ25LjP4Jz
 
 3. **Configure environment variables**
    - Copy `.env.example` to `.env.local`
-   - Set your Gemini API key:
+   - Set your Gemini API key and repository name:
    ```bash
    cp .env.example .env.local
-   # Edit .env.local and add your GEMINI_API_KEY
+   # Edit .env.local and add:
+   # - GEMINI_API_KEY: Your Gemini API key
+   # - REPO_NAME: Your repository name (e.g., 'ww' for GitHub Pages)
    ```
 
 4. **Run the development server**
