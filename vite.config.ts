@@ -8,6 +8,30 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    // Configure base path for GitHub Pages deployment
+    // If REPO_NAME is set, use it; otherwise default to root
+    base: env.REPO_NAME ? `/${env.REPO_NAME}/` : '/',
+    build: {
+      // Optimize build output
+      outDir: 'dist',
+      // Generate source maps for debugging in production
+      sourcemap: mode === 'development',
+      // Use esbuild for minification (faster than terser)
+      minify: 'esbuild',
+      // Optimize chunk size
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom'],
+            genai: ['@google/genai'],
+          },
+        },
+      },
+    },
+    // Remove console.log in production
+    esbuild: {
+      drop: mode === 'production' ? ['console', 'debugger'] : [],
+    },
     define: {
       // Polyfill process.env with actual values from the environment
       // usage of JSON.stringify ensures that values are injected as valid strings or valid JSON objects
