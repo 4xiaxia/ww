@@ -8,6 +8,7 @@ import AgentAvatar from './components/AgentAvatar';
 import { GoogleGenAI } from '@google/genai';
 import { CONFIG, getNextApiKey } from './config';
 import { decodeAudioData } from './utils/audioUtils';
+import { testShengsuanConnection, logApiConfiguration } from './utils/apiTest';
 
 // --- Data Constants ---
 const SPOT_DATA = {
@@ -111,7 +112,7 @@ const WeatherWidget = () => {
 };
 
 // --- Service Mode Switch Component ---
-const ModeSwitch: React.FC<{ mode: ServiceMode, onToggle: (m: ServiceMode) => void }> = ({ mode, onToggle }) => {
+const ModeSwitch: React.FC<{ mode: ServiceMode, onToggle: (m: ServiceMode) => void, isConnected: boolean | null }> = ({ mode, onToggle, isConnected }) => {
     return (
         <div className="flex bg-gray-200/50 p-1 rounded-xl shadow-inner border border-gray-200/50 relative">
              {/*
@@ -120,9 +121,29 @@ const ModeSwitch: React.FC<{ mode: ServiceMode, onToggle: (m: ServiceMode) => vo
                We hide the switch and force 'CN' (REST) mode to prevent connection errors.
              */}
             <button 
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all relative z-10 bg-red-500 text-white shadow-sm shadow-red-200 cursor-default`}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all relative z-10 ${
+                    isConnected === null 
+                        ? 'bg-gray-400 text-white' 
+                        : isConnected 
+                            ? 'bg-red-500 text-white shadow-sm shadow-red-200' 
+                            : 'bg-orange-500 text-white'
+                } cursor-default`}
             >
-                <i className="fas fa-check-circle mr-1"></i>已连接专线
+                {isConnected === null && (
+                    <>
+                        <i className="fas fa-circle-notch fa-spin mr-1"></i>检测中...
+                    </>
+                )}
+                {isConnected === true && (
+                    <>
+                        <i className="fas fa-check-circle mr-1"></i>胜算云专线已连接
+                    </>
+                )}
+                {isConnected === false && (
+                    <>
+                        <i className="fas fa-exclamation-triangle mr-1"></i>连接异常
+                    </>
+                )}
             </button>
         </div>
     );
@@ -145,6 +166,9 @@ const App: React.FC = () => {
   const [showNetworkModal, setShowNetworkModal] = useState(false);
   const [networkCheckPhase, setNetworkCheckPhase] = useState<'checking' | 'result'>('checking');
   const [networkProgress, setNetworkProgress] = useState(0);
+
+  // API Connection State
+  const [isApiConnected, setIsApiConnected] = useState<boolean | null>(null);
 
   // Fallback / CN Logic State
   const [isFallbackMode, setIsFallbackMode] = useState(false); 
@@ -192,6 +216,16 @@ const App: React.FC = () => {
       bubbleUser: serviceMode === ServiceMode.CN ? 'bg-red-500' : 'bg-blue-500',
       bubbleModel: serviceMode === ServiceMode.CN ? 'border-red-200 bg-red-50 text-red-900' : 'border-gray-100 bg-white text-gray-800',
   };
+
+  // Test API connection on mount
+  useEffect(() => {
+    const testConnection = async () => {
+      logApiConfiguration();
+      const connected = await testShengsuanConnection();
+      setIsApiConnected(connected);
+    };
+    testConnection();
+  }, []);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -697,7 +731,7 @@ const App: React.FC = () => {
            <h2 className="text-xs text-gray-400 font-medium mt-1 tracking-wider">村官智能体 伴您游</h2>
         </div>
         <div className="flex flex-col items-end gap-1">
-            <ModeSwitch mode={serviceMode} onToggle={handleModeToggle} />
+            <ModeSwitch mode={serviceMode} onToggle={handleModeToggle} isConnected={isApiConnected} />
             <WeatherWidget />
         </div>
       </div>

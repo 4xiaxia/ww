@@ -53,6 +53,15 @@ const cleanBaseUrl = (
     envBaseUrl.trim() !== ""
 ) ? envBaseUrl : SHENGSUAN_API_BASE_URL;
 
+// Log the API configuration on initialization
+console.log('🚀 [Config] Initializing with Shengsuanyun API');
+console.log('📡 [Config] API Base URL:', cleanBaseUrl);
+if (cleanBaseUrl === SHENGSUAN_API_BASE_URL) {
+    console.log('✅ [Config] Using Shengsuanyun dedicated line (胜算云专线)');
+} else {
+    console.log('⚠️ [Config] Using custom API endpoint');
+}
+
 export const CONFIG = {
   getNextApiKey,
   // Use the computed URL (Env > Shengsuan Default)
