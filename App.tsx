@@ -114,15 +114,25 @@ const WeatherWidget = () => {
 const ModeSwitch: React.FC<{ mode: ServiceMode, onToggle: (m: ServiceMode) => void }> = ({ mode, onToggle }) => {
     return (
         <div className="flex bg-gray-200/50 p-1 rounded-xl shadow-inner border border-gray-200/50 relative">
-             {/*
-               Hidden for Proxy Stability:
-               The Shengsuanyun proxy only supports REST API (Turn-Based), not the WebSocket Realtime API required for 'Global' mode.
-               We hide the switch and force 'CN' (REST) mode to prevent connection errors.
-             */}
             <button 
-                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all relative z-10 bg-red-500 text-white shadow-sm shadow-red-200 cursor-default`}
+                onClick={() => onToggle(ServiceMode.GLOBAL)}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all relative z-10 ${
+                    mode === ServiceMode.GLOBAL
+                    ? 'bg-white text-blue-500 shadow-sm'
+                    : 'text-gray-400 hover:text-gray-600'
+                }`}
             >
-                <i className="fas fa-check-circle mr-1"></i>已连接专线
+                <i className="fas fa-globe-americas mr-1"></i>全球
+            </button>
+            <button
+                onClick={() => onToggle(ServiceMode.CN)}
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all relative z-10 ${
+                    mode === ServiceMode.CN
+                    ? 'bg-red-500 text-white shadow-sm shadow-red-200'
+                    : 'text-gray-400 hover:text-gray-600'
+                }`}
+            >
+                <i className="fas fa-flag mr-1"></i>CN专线
             </button>
         </div>
     );
