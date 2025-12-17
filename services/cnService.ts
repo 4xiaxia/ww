@@ -23,8 +23,12 @@ export class CNService {
     // This allows routing traffic through a domestic proxy/relay in the future without affecting the Global line.
     if (CONFIG.CN_API_BASE_URL) {
         options.baseUrl = CONFIG.CN_API_BASE_URL;
+        console.log('✅ [CNService] Connected to Shengsuanyun (胜算云专线)');
+        console.log('📡 [CNService] Endpoint:', CONFIG.CN_API_BASE_URL);
     } else if (CONFIG.API_BASE_URL) {
         options.baseUrl = CONFIG.API_BASE_URL;
+        console.log('✅ [CNService] Connected to API');
+        console.log('📡 [CNService] Endpoint:', CONFIG.API_BASE_URL);
     }
     
     this.ai = new GoogleGenAI(options);
