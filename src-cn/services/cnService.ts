@@ -20,7 +20,7 @@ export class CNService {
     this.ai = new GoogleGenAI({
       apiKey: apiKey || '',
       baseUrl: CONFIG.API_BASE_URL
-    });
+    } as any);
   }
 
   /**

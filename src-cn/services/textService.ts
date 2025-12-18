@@ -11,7 +11,7 @@ export class TextService {
     this.ai = new GoogleGenAI({
       apiKey,
       baseUrl: CONFIG.API_BASE_URL
-    });
+    } as any);
     
     this.chat = this.ai.chats.create({
       model: CONFIG.MODELS.TEXT,

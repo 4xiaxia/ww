@@ -1,6 +1,8 @@
 // CN版本配置 - 强制胜算云
 // 删除所有条件判断，直接写死配置
 
+/// <reference types="vite/client" />
+
 export const CONFIG = {
   API_BASE_URL: 'https://router.shengsuanyun.com/api',
   
