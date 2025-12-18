@@ -21,8 +21,39 @@ const SPOT_DATA = {
     { id: 'n3', name: '油桐花海', desc: '五月飞雪', detailImage: 'https://picsum.photos/seed/n3/600/400' }
   ]},
   people: { title: '东里名人', color: 'purple', bg: 'bg-purple-500', spots: [
-    { id: 'p1', name: '革命先辈', desc: '缅怀先烈', detailImage: 'https://picsum.photos/seed/p1/600/400' },
-    { id: 'p2', name: '乡贤名人', desc: '德高望重', detailImage: 'https://picsum.photos/seed/p2/600/400' }
+    { 
+      id: 'p1', 
+      name: '革命先辈', 
+      desc: '追忆为国家独立、民族解放奋斗牺牲的英雄人物，传承红色基因。', 
+      detailImage: 'https://picsum.photos/seed/p1/600/400',
+      directory: [
+        { name: '郑玉指', tag: '同盟会会员', desc: '辛亥革命华侨领袖，追随孙中山先生，倾家荡产资助革命。其故居位于东里中路76号，现为县级文物保护单位。' },
+        { name: '颜子俊', tag: '爱国侨领', desc: '著名爱国华侨领袖，抗战期间积极组织海外华侨捐资捐物，支持祖国抗战。' },
+        { name: '郑义', tag: '红军烈士', desc: '1930年参加红军，在反围剿战斗中英勇牺牲，年仅22岁。' }
+      ]
+    },
+    { 
+      id: 'p2', 
+      name: '名士乡贤', 
+      desc: '介绍德高望重，热心公益，造福桑梓的杰出乡贤事迹。', 
+      detailImage: 'https://picsum.photos/seed/p2/600/400',
+      directory: [
+        { name: '郑老先生', tag: '慈善家', desc: '改革开放初期捐资百万修建东里小学教学楼，设立"东里奖学金"，资助贫困学生数百人。' },
+        { name: '李教授', tag: '文化学者', desc: '致力于整理东里村族谱与地方志，编撰《东里村史》，为传承村落文化做出巨大贡献。' },
+        { name: '张医师', tag: '名医', desc: '悬壶济世五十年，医术精湛，医德高尚，免费为村里老人义诊。' }
+      ]
+    },
+    { 
+      id: 'p3', 
+      name: '青年后生', 
+      desc: '展现朝气蓬勃，在各行各业崭露头角，建设家乡的新生代力量。', 
+      detailImage: 'https://picsum.photos/seed/p3/600/400',
+      directory: [
+        { name: '2024届 郑晓明', tag: '清华大学', desc: '以优异成绩考入清华大学计算机系，是东里村近十年来第一位考入清北的学生。' },
+        { name: '东里青年创业团', tag: '返乡创业', desc: '由5名返乡大学生组成的创业团队，利用电商平台推广东里特产，年销售额破千万。' },
+        { name: '林小红', tag: '非遗传承人', desc: '90后剪纸艺术家，致力于将传统剪纸艺术与现代设计结合，作品多次在省市获奖。' }
+      ]
+    }
   ]},
   industries: { title: '特色产业', color: 'orange', bg: 'bg-orange-500', spots: [
     { id: 'i1', name: '高山铁观音', desc: '云雾缭绕', detailImage: 'https://picsum.photos/seed/i1/600/400' },
@@ -42,8 +73,9 @@ const App: React.FC = () => {
   const audioChunksRef = useRef<Blob[]>([]);
   
   // 导航状态
-  const [currentView, setCurrentView] = useState<'dashboard' | 'map' | 'detail'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'map' | 'category' | 'detail'>('dashboard');
   const [activeCategory, setActiveCategory] = useState<'red' | 'nature' | 'people' | 'industries'>('red');
+  const [selectedCategory, setSelectedCategory] = useState<any | null>(null); // 选中的分类（如革命先辈）
   const [detailSpot, setDetailSpot] = useState<any | null>(null);
   
   // UI状态
@@ -176,7 +208,11 @@ const App: React.FC = () => {
           </div>
           <div className="relative z-10 flex-1 px-6 py-3 grid grid-cols-2 gap-3">
             {(['red', 'nature', 'people', 'industries'] as const).map(cat => (
-              <div key={cat} onClick={() => { setActiveCategory(cat); setCurrentView('map'); }}
+              <div key={cat} onClick={() => { 
+                setActiveCategory(cat); 
+                // 东里人物需要先显示分类选择，其他直接显示列表
+                setCurrentView(cat === 'people' ? 'category' : 'map'); 
+              }}
                 className="h-40 bg-gray-300 rounded-3xl p-6 flex items-end cursor-pointer hover:scale-105 transition-transform">
                 <span className="text-lg font-medium text-gray-600">{SPOT_DATA[cat].title}</span>
               </div>
@@ -185,19 +221,53 @@ const App: React.FC = () => {
         </>
       )}
 
-      {currentView === 'map' && (
+      {/* 分类选择页 - 仅用于东里人物 */}
+      {currentView === 'category' && (
         <div className="flex flex-col h-full relative z-20">
           <div className="flex items-center justify-between px-6 pt-6 pb-4 bg-white/80">
             <button onClick={() => setCurrentView('dashboard')} className="w-10 h-10 rounded-full bg-white shadow-sm"><i className="fas fa-chevron-left"></i></button>
-            <span className="font-bold text-xl">村落导览</span><div className="w-10"></div>
+            <span className="font-bold text-xl">{SPOT_DATA[activeCategory].title}</span><div className="w-10"></div>
           </div>
           <div className="flex-1 overflow-y-auto px-6 pb-32 space-y-4">
-            {SPOT_DATA[activeCategory].spots.map(spot => (
-              <div key={spot.id} onClick={() => { setDetailSpot(spot); setCurrentView('detail'); }} 
-                className="bg-white p-5 rounded-3xl shadow-sm cursor-pointer">
-                <h4 className="font-bold text-gray-800 text-lg">{spot.name}</h4>
+            {SPOT_DATA[activeCategory].spots.map(category => (
+              <div key={category.id} onClick={() => { setSelectedCategory(category); setCurrentView('map'); }} 
+                className="bg-white p-5 rounded-3xl shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                <h4 className="font-bold text-gray-800 text-lg">{category.name}</h4>
+                <p className="text-gray-500 text-sm mt-1">{category.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {currentView === 'map' && (
+        <div className="flex flex-col h-full relative z-20">
+          <div className="flex items-center justify-between px-6 pt-6 pb-4 bg-white/80">
+            <button onClick={() => setCurrentView(activeCategory === 'people' ? 'category' : 'dashboard')} className="w-10 h-10 rounded-full bg-white shadow-sm"><i className="fas fa-chevron-left"></i></button>
+            <span className="font-bold text-xl">{activeCategory === 'people' && selectedCategory ? selectedCategory.name : '村落导览'}</span><div className="w-10"></div>
+          </div>
+          <div className="flex-1 overflow-y-auto px-6 pb-32 space-y-4">
+            {activeCategory === 'people' && selectedCategory && selectedCategory.directory ? (
+              // 显示人物卡片列表
+              selectedCategory.directory.map((person: any, index: number) => (
+                <div key={index} onClick={() => { setDetailSpot(person); setCurrentView('detail'); }} 
+                  className="bg-white p-5 rounded-3xl shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-gray-800 text-lg">{person.name}</h4>
+                    <span className="text-xs bg-purple-100 text-purple-600 px-3 py-1 rounded-full">{person.tag}</span>
+                  </div>
+                  <p className="text-gray-500 text-sm mt-2 line-clamp-2">{person.desc}</p>
+                </div>
+              ))
+            ) : (
+              // 其他分类显示景点列表
+              SPOT_DATA[activeCategory].spots.map(spot => (
+                <div key={spot.id} onClick={() => { setDetailSpot(spot); setCurrentView('detail'); }} 
+                  className="bg-white p-5 rounded-3xl shadow-sm cursor-pointer hover:bg-gray-50 transition">
+                  <h4 className="font-bold text-gray-800 text-lg">{spot.name}</h4>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
@@ -207,8 +277,11 @@ const App: React.FC = () => {
           <button onClick={() => setCurrentView('map')} className="absolute top-6 left-6 z-30 w-12 h-12 rounded-full bg-yellow-400 shadow-sm"><i className="fas fa-arrow-left"></i></button>
           <div className="flex-1 overflow-y-auto px-4 pb-32 pt-20">
             <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
-              <img src={detailSpot.detailImage} className="w-full h-48 object-cover" />
-              <div className="p-5"><p className="text-gray-600">{detailSpot.desc}</p></div>
+              {detailSpot.detailImage && <img src={detailSpot.detailImage} className="w-full h-48 object-cover" />}
+              <div className="p-5">
+                {detailSpot.tag && <span className="inline-block text-xs bg-purple-100 text-purple-600 px-3 py-1 rounded-full mb-3">{detailSpot.tag}</span>}
+                <p className="text-gray-600">{detailSpot.desc}</p>
+              </div>
             </div>
           </div>
         </div>
