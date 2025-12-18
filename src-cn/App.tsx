@@ -249,8 +249,8 @@ const App: React.FC = () => {
           <div className="flex-1 overflow-y-auto px-6 pb-32 space-y-4">
             {activeCategory === 'people' && selectedCategory && selectedCategory.directory ? (
               // 显示人物卡片列表
-              selectedCategory.directory.map((person: any, index: number) => (
-                <div key={index} onClick={() => { setDetailSpot(person); setCurrentView('detail'); }} 
+              selectedCategory.directory.map((person: any) => (
+                <div key={person.name} onClick={() => { setDetailSpot(person); setCurrentView('detail'); }} 
                   className="bg-white p-5 rounded-3xl shadow-sm cursor-pointer hover:bg-gray-50 transition">
                   <div className="flex items-center justify-between">
                     <h4 className="font-bold text-gray-800 text-lg">{person.name}</h4>
