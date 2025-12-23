@@ -38,7 +38,7 @@ export const getNextApiKey = (): string => {
 
 // Base URL Handling
 // To ensure accessibility in Mainland China, we enforce the Shengsuanyun proxy as the default.
-const SHENGSUAN_API_BASE_URL = 'https://router.shengsuanyun.com/api';
+const SHENGSUANYUN_API_BASE_URL = 'https://router.shengsuanyun.com/api';
 
 const envBaseUrl = process.env.API_BASE_URL;
 
@@ -49,7 +49,7 @@ const cleanBaseUrl = (
     envBaseUrl !== "undefined" && 
     envBaseUrl !== "null" && 
     envBaseUrl.trim() !== ""
-) ? envBaseUrl : SHENGSUAN_API_BASE_URL;
+) ? envBaseUrl : SHENGSUANYUN_API_BASE_URL;
 
 export const CONFIG = {
   getNextApiKey,
